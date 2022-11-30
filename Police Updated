@@ -146,7 +146,7 @@ fig3.update_yaxes(showgrid=False)
 
 #GRAF 5 (fig4)
 #Es un gráfico jerárquico que muestra en un circulo interior el Distrito Policial que atendió el reporte y en un circulo exterior el Vecindario donde el Incidente ocurrió. El área de estos circulos dependerá de la cantidad de Reportes registrados. 
-fig4 = px.sunburst(df[mask], color_discrete_sequence = ['#c40000','#ff7676'], values='contador', path=['Police District','Analysis Neighborhood'], hover_name='Analysis Neighborhood')
+fig4 = px.sunburst(df[mask], color_discrete_sequence = ['#c40000','#ff7676'], values='contador', path=['Analysis Neighborhood','Police District'], hover_name='Analysis Neighborhood')
 fig4.update_layout(plot_bgcolor="white", title = 'Crimes by Police District and Neighborhood')
 
 #GRAF 6 (fig5)
