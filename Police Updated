@@ -99,8 +99,10 @@ mask = (df['Incident Year'].isin(Year_s)) & (df['Report Type Description'].isin(
 #Es un mapa que muestra los dónde ocurrieron los incidentes de acuerdo a la Latitud y Longitud.
 #Cuando el señalador pasa sobre los puntos se muestra el Id del reporte, el Vecindario, las calles que intersectan el lugar del incidente, el distrito policiaco y la descripción del Incidente a manera de tooltip/label.
 
+##NOTA SOBRE EL MAPA. CADA CAMBIO DE FILTRO NECESITA UN RESET, ES DECIR, BORRAR TODAS LAS OPCIONES DISPONIBLES EN EL FILTRO DESEADO, ESPERAR Y VER UN ERROR, ESCOGER LAS OPCIONES DESEADAS. ESTO ES NECESARIO CADA VEZ QUE SE QUIERAN CAMBIAR LAS OPCIONES.
 
-fig = px.scatter_mapbox(df[mask],   ##NOTA SOBRE EL MAPA. CADA CAMBIO DE FILTRO NECESITA UN RESET, ES DECIR, BORRAR TODAS LAS OPCIONES DISPONIBLES EN FILTROS, ESPERAR Y VER UN ERROR, ESCOGER LOS FILTROS DESEADOS.
+
+fig = px.scatter_mapbox(df[mask],   .
                         lat="Latitude",
                         lon="Longitude",
                         hover_name="Row ID",
