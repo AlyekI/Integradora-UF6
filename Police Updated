@@ -99,10 +99,8 @@ mask = (df['Incident Year'].isin(Year_s)) & (df['Report Type Description'].isin(
 #Es un mapa que muestra los dónde ocurrieron los incidentes de acuerdo a la Latitud y Longitud.
 #Cuando el señalador pasa sobre los puntos se muestra el Id del reporte, el Vecindario, las calles que intersectan el lugar del incidente, el distrito policiaco y la descripción del Incidente a manera de tooltip/label.
 
-##NOTA SOBRE EL MAPA. CADA CAMBIO DE FILTRO NECESITA UN RESET, ES DECIR, BORRAR TODAS LAS OPCIONES DISPONIBLES EN EL FILTRO DESEADO, ESPERAR Y VER UN ERROR, ESCOGER LAS OPCIONES DESEADAS. ESTO ES NECESARIO CADA VEZ QUE SE QUIERAN CAMBIAR LAS OPCIONES.
 
-
-fig = px.scatter_mapbox(df[mask],   .
+fig = px.scatter_mapbox(df[mask],
                         lat="Latitude",
                         lon="Longitude",
                         hover_name="Row ID",
@@ -114,18 +112,22 @@ fig.update_layout(mapbox_style="stamen-toner")
 fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 fig.update_layout(title='San Francisco Crime Map')
 
+
+
 #GRAF 2 (fig1)
 #Es un diagrama de lineas que muestra la cantidad promedio de reportes de incidentes por Hora del día (Hora-Minuto-Segundo)
 #Como tooltip/label se muestra (HORA DEL DÍA, INCIDENTES PROMEDIO)
 fig1 = go.Figure()
-fig1.add_trace(go.Scatter(x=df[mask]['Incident Time'].sort_values().unique(), y=df[mask].groupby(['Incident Time']).mean()['Row ID'], line=dict(color='red', width=4)))
+fig1.add_trace(go.Scatter(x=df[mask]['Incident Time'].sort_values().unique(),
+                          y=df[mask].groupby(['Incident Time']).count()['contador']/df[mask].groupby(['Incident Time','Incident Datetime']).count()['contador'].groupby('Incident Time').count(),
+                          line=dict(color='red', width=4)))
 fig1.update_layout(title='Cases throughout the day', xaxis_title='Time', yaxis_title='Average Cases')
 fig1.update_xaxes(showgrid=False)
 fig1.update_yaxes(showgrid=False)
 
 #GRAF 3 (fig2)
 #Con la libreria pandas se crea un subconjunto que agrupa las variables de Día de la Semana con el Estado del Reporte y regresa la media en días que se tardo en levantar el reporte desde que sucedio el incidente. 
-df1 = pd.DataFrame({'count' : df[mask].groupby( ['Incident Day of Week','Resolution'] )['diff'].mean()}).reset_index()
+df1 = pd.DataFrame({'count' : df[mask].groupby(['Incident Day of Week','Resolution'])['diff'].mean()}).reset_index()
 df1['Incident Day of Week'] = pd.Categorical(df1['Incident Day of Week'], ["Monday", "Tuesday", 'Wednesday', 'Thursday','Friday','Saturday', "Sunday"])
 df1.sort_values("Incident Day of Week", inplace = True)
 #Es una grafica de barras que muestra el promedio de días de diferencia entre el levantamiento del reporte y la fecha del incidente por día categorizando al mismo tiempo con el Estado del Reporte. 
@@ -141,10 +143,12 @@ fig2.update_layout(yaxis_title='Days of Difference between Report and Incident',
 #GRAF 4 (fig3)
 #Es un diagrama de lineas que muestra un conteo de Incidentes a traves del tiempo: Historial de Incidentes de Crimen
 fig3 = go.Figure()
-fig3.add_trace(go.Scatter(x=df[mask].sort_values(by=['Incident Datetime'])['Incident Datetime'].unique(), y=df[mask].groupby(['Incident Datetime']).count()['Row ID'], line=dict(color='red', width=4)))
+fig3.add_trace(go.Scatter(x=df[mask].sort_values(by=['Incident Date'])['Incident Date'].unique(), y=df[mask].sort_values(by=['Incident Date']).groupby(['Incident Date']).sum()['contador'], line=dict(color='red', width=4)))
 fig3.update_layout(title = 'Crime Record', xaxis_title = 'Date', yaxis_title='Amount of Crimes')
 fig3.update_xaxes(showgrid=False)
 fig3.update_yaxes(showgrid=False)
+
+
 
 #GRAF 5 (fig4)
 #Es un gráfico jerárquico que muestra en un circulo interior el Distrito Policial que atendió el reporte y en un circulo exterior el Vecindario donde el Incidente ocurrió. El área de estos circulos dependerá de la cantidad de Reportes registrados. 
